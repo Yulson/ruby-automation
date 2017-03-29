@@ -2,12 +2,12 @@ require 'faker'
 
 class Issue
 
-	attr_reader :issue_name, :issue_type
-	attr_accessor :issue_name, :issue_type
+	attr_reader :name, :type
+	attr_accessor :name, :type
 
-	def initialize(options={})
-		@issue_name = Faker::Team.name
-		@issue_type = options [:issue_type] #vaue1 = bug   value2 = feature   value3 = support
+	def initialize(issue_data={})
+		@name = issue_data[:name] || Faker::Team.name
+		@type = issue_data[:type] || 1 #vaue1 = bug   value2 = feature   value3 = support
 	end
 	
 
