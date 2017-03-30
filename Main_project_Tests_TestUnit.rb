@@ -1,0 +1,123 @@
+require 'faker'
+require 'selenium-webdriver'
+require 'test-unit'
+require_relative 'Main_project_Helpers'
+require_relative 'User'
+require_relative 'Project'
+require_relative 'Issue'
+
+ class TestRedmine < Test::Unit::TestCase
+ 	include Main_project_Helpers
+
+ 	def setup
+ 		@driver = Selenium::WebDriver.for :firefox
+ 		@wait = Selenium::WebDriver::Wait.new(:timeout => 20)
+ 		@driver.navigate.to 'http://demo.redmine.org/'
+ 	end
+
+	def test_register_user
+		user = register_user({})
+		expected_text = 'Your account has been activated. You can now log in.'
+		actual_text = @driver.find_element(:css, '#flash_notice').text
+		assert_equal(expected_text, actual_text)
+	end
+
+	def test_log_out
+	  	register_user({})
+	   	log_out
+	 	assert(@driver.find_element(:css, '.login').displayed?)
+	end
+
+	def test_log_in
+	   	user = register_user({})
+	   	log_out
+	   	log_in(user)
+
+	  	expected_login = user.login
+	  	actual_login = @driver.find_element(:css, '[class="user active"]').text
+	   	assert_equal(expected_login, actual_login)
+	end
+
+ 	def test_change_pass
+ 		user = register_user({})
+ 		change_pass(user)
+ 		expected_notice = 'Password was successfully updated.'
+ 		actual_notice = @driver.find_element(:css, '#flash_notice').text
+ 		assert_equal(expected_notice, actual_notice)
+ 		log_out
+ 		log_in(user)
+ 		expected_login = user.login
+		actual_login = @driver.find_element(:css, '[class="user active"]').text
+	 	assert_equal(expected_login, actual_login)
+ 	end
+
+
+ 	def test_create_new_project
+ 		user = register_user({})
+ 	 	project = create_new_project({})
+
+ 	 	expected_notice = 'Successful creation.'
+ 	 	actual_notice = @driver.find_element(:css, '#flash_notice').text
+ 	 	assert_equal(expected_notice, actual_notice)
+ 	end
+
+  	def test_create_new_version
+   	 	user = register_user({})
+   	 	project = create_new_project({})
+   		create_new_version(project)
+
+   		expected_notice = 'Successful creation.'
+   	    actual_notice = @driver.find_element(:css, '#flash_notice').text
+  	 	assert_equal(expected_notice, actual_notice)
+   	end
+
+	def test_create_bug
+	    user = register_user({})
+	    project = create_new_project({})
+	    issue = create_new_issue({type: '1'})
+	     	
+	    expected_subject = issue.name
+	    actual_array_subjects = []
+	    actual_array_subjects = @driver.find_elements(:css, '.subject').map {|element| element.text}
+	    assert_true(actual_array_subjects.include? expected_subject)	
+	end
+
+	def test_create_feature
+		user = register_user({})
+	    project = create_new_project({})
+	    issue = create_new_issue({type: '2'})
+	     	
+	    expected_subject = issue.name
+	    actual_array_subjects = []
+	    actual_array_subjects = @driver.find_elements(:css, '.subject').map {|element| element.text}
+	    assert_true(actual_array_subjects.include? expected_subject)
+	end
+
+	def test_create_suppott
+		user = register_user({})
+	    project = create_new_project({})
+	    issue = create_new_issue({type: '3'})
+	    
+	    expected_subject = issue.name
+	    actual_array_subjects = []
+	    actual_array_subjects = @driver.find_elements(:css, '.subject').map {|element| element.text}
+	    assert_true(actual_array_subjects.include? expected_subject)
+	end
+
+    def test_create_issues
+     	user = register_user({})
+	    project = create_new_project({})
+	    issue1 = create_new_issue({type: '1'})
+	    issue2 = create_new_issue({type: '2'})
+	    issue3 = create_new_issue({type: '3'})
+     	
+     	actual_array_subjects = []
+     	actual_array_subjects = @driver.find_elements(:css, '.subject').map {|element| element.text}
+
+     	assert_equal(issue3.name, actual_array_subjects[0])
+     	assert_equal(issue2.name, actual_array_subjects[1])
+     	assert_equal(issue1.name, actual_array_subjects[2])
+     end
+
+
+end
