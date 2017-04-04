@@ -100,4 +100,18 @@ require_relative 'User'
  		issue
 	end	
 
+	def open_project(project)
+		@driver.find_element(:css, '.projects').click
+		@driver.find_element(:css, '#q').send_keys project.name
+		@driver.action.send_keys(:enter).perform
+		available_projects = @driver.find_elements(:css, '.project .highlight'). map {|element| element.text}
+
+
+	end
+
 end
+
+# open project page
+# open issues tab
+# is a bug present
+# add self to watchers
