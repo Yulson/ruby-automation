@@ -151,7 +151,7 @@ end
 
 
 def modify_hash(sample_hash={})
-  sample_hash.each_pair {|key, value| {key.to_sym => value = transform_value(value)}}
+  sample_hash.each_pair {|key, value| {key.to_sym => transform_value(value)}}
 end
 
 puts "method #8"

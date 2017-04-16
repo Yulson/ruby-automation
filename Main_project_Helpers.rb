@@ -1,6 +1,7 @@
 require 'selenium-webdriver'
 require_relative 'User'
-
+require_relative 'Project'
+require_relative 'Issue'
 
 
  module Main_project_Helpers
@@ -8,10 +9,8 @@ require_relative 'User'
 
 
 	def register_user(user_data)
-
  		user = User.new unless user_data.empty?
 		user = user_data.empty? ? User.new : User.new(user_data)
-		
 
 		@driver.find_element(:class, 'register').click
 		@wait.until {@driver.find_element(:id, 'user_login').displayed?}
@@ -30,6 +29,7 @@ require_relative 'User'
 		@driver.find_element(:css, '.logout').click
 	end
 
+
 	def log_in(user)
 		@driver.find_element(:css, '.login').click
 		@driver.find_element(:css, '#username').send_keys user.login
@@ -37,6 +37,7 @@ require_relative 'User'
 		@driver.find_element(:css, '[name="login"]').click
 	end
 	
+
  	def change_pass(user)		
  		@driver.find_element(:css, '.my-account').click
  		@driver.find_element(:css, '.icon-passwd').click
@@ -46,8 +47,8 @@ require_relative 'User'
  		@driver.find_element(:css, '[name="commit"]').click
  	end
  	
- 	def create_new_project(project_data)
 
+ 	def create_new_project(project_data)
  		project = Project.new unless project_data.empty?
 		project = project_data.empty? ? Project.new : Project.new(project_data)
 
@@ -59,16 +60,6 @@ require_relative 'User'
  		project
  	end
 
-   def change_roles
- 		@driver.find_element(:css, '.odd .icon-edit:nth-child(1)').click
- 		@driver.find_element(:css, '.odd [value="5"]:nth-child(1)').click
- 		@driver.find_element(:css, '.odd [value="3"]:nth-child(1)').click
- 		@driver.find_element(:css, '.odd [name="commit"]').click
- 		@driver.find_element(:css, '.even .icon-edit:nth-child(1)').click
- 		@driver.find_element(:css, '.even  [value="5"]:nth-child(1)').click
- 		@driver.find_element(:css, '.even [value="3"]:nth-child(1)').click
- 		@driver.find_element(:css, '.even [name="commit"]').click
- 	end
 
  	def create_new_version(project)
   		@driver.find_element(:css, '#tab-versions').click
@@ -85,8 +76,8 @@ require_relative 'User'
   		@driver.find_element(:css, '[name="commit"]').click
   	end
 
-	def create_new_issue(issue_data)
 
+	def create_new_issue(issue_data)
 		issue = Issue.new unless issue_data.empty?
 		issue = issue_data.empty? ? Issue.new : Issue.new(issue_data)
 
@@ -100,18 +91,49 @@ require_relative 'User'
  		issue
 	end	
 
+
 	def open_project(project)
-		@driver.find_element(:css, '.projects').click
-		@driver.find_element(:css, '#q').send_keys project.name
-		@driver.action.send_keys(:enter).perform
-		available_projects = @driver.find_elements(:css, '.project .highlight'). map {|element| element.text}
-
-
+		@driver.navigate.to project.get_url
 	end
 
-end
 
-# open project page
-# open issues tab
-# is a bug present
-# add self to watchers
+	def open_issues_tab(project)
+		open_project(project)
+		@wait.until {@driver.find_element(:css, '.issues').displayed?}
+		@driver.find_element(:css, '.issues').click
+	end
+
+
+	def is_issues_tab_empty?(project)
+		open_issues_tab(project)
+		if @driver.find_element(:css, '.nodata').displayed?
+			return true
+		end
+
+	rescue Selenium::WebDriver::Error::NoSuchElementError => e
+		puts 'Exception ' + e.class.to_s + ' issues tab was not empty'
+		return false
+    end
+
+
+	def create_or_not_create_new_issue(project)
+		open_project(project)
+		random_action = rand(0..1)
+		if random_action == 1
+			issue = create_new_issue({})
+			open_issues_tab(project)
+		else 
+			open_issues_tab(project)
+		end
+		issue
+	end
+
+
+	def add_self_to_watchers(project, issue)
+		open_issues_tab(project)
+		@driver.find_element(:link_text, issue.name).click
+		@driver.find_element(:css, '.contextual:first-child .icon-fav-off').click
+		@driver.navigate().refresh()
+	end
+	
+end
