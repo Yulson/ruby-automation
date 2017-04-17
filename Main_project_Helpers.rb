@@ -8,7 +8,7 @@ require_relative 'Issue'
 
 
 
-	def register_user(user_data)
+	def register_user(user_data={})
  		user = User.new unless user_data.empty?
 		user = user_data.empty? ? User.new : User.new(user_data)
 
@@ -48,7 +48,7 @@ require_relative 'Issue'
  	end
  	
 
- 	def create_new_project(project_data)
+ 	def create_new_project(project_data={})
  		project = Project.new unless project_data.empty?
 		project = project_data.empty? ? Project.new : Project.new(project_data)
 
@@ -77,7 +77,7 @@ require_relative 'Issue'
   	end
 
 
-	def create_new_issue(issue_data)
+	def create_new_issue(issue_data={})
 		issue = Issue.new unless issue_data.empty?
 		issue = issue_data.empty? ? Issue.new : Issue.new(issue_data)
 
@@ -93,7 +93,7 @@ require_relative 'Issue'
 
 
 	def open_project(project)
-		@driver.navigate.to project.get_url
+		@driver.navigate.to project.url
 	end
 
 
@@ -106,25 +106,17 @@ require_relative 'Issue'
 
 	def is_issues_tab_empty?(project)
 		open_issues_tab(project)
-		if @driver.find_element(:css, '.nodata').displayed?
-			return true
-		end
-
-	rescue Selenium::WebDriver::Error::NoSuchElementError => e
-		puts 'Exception ' + e.class.to_s + ' issues tab was not empty'
-		return false
-    end
-
+		@driver.find_elements(:css, '.nodata').empty? ? false : true
+	end
+   
 
 	def create_or_not_create_new_issue(project)
 		open_project(project)
 		random_action = rand(0..1)
-		if random_action == 1
-			issue = create_new_issue({})
-			open_issues_tab(project)
-		else 
-			open_issues_tab(project)
+		if random_action == 1 
+			issue = create_new_issue
 		end
+		open_issues_tab(project)
 		issue
 	end
 
