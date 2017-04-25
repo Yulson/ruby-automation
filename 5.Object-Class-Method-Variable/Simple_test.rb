@@ -23,33 +23,26 @@ require_relative 'Comment'
  	def test_create_user  # 1. make sure that user is created with specific user_data
 			user = register_user({})
 
-			if (user.first_name.kind_of? String) && (user.last_name.kind_of? String) && (user.last_name.kind_of? String)
-					puts 'test_create_user OK'
-			else
-					puts 'test_create_user FAILED'
-			end
+      assert_instance_of(String, user.first_name)
+      assert_instance_of(String, user.last_name)
   end
 
    def test_create_board # 2. make sure that board is created and user-creator is a watcher
       user = register_user({})
       board = user.create_board(@boardname)
 
-      if (board.boardname.kind_of? String) && (board.lists.kind_of? Array) && (board.creator == user) && (board.watchers.include?(user))
-        puts 'test_create_board OK'
-      else
-        puts 'test_create_board FAILED'
-      end
+      assert_instance_of(String, board.boardname)
+      assert_instance_of(Array, board.lists)
+      assert_equal(board.creator, user)
+      assert_true(board.watchers.include? user)
    end
 
   def test_board_is_assigned_to_user #3. make sure that board, created by user is saved to owned boards and added to watching boards
       user = register_user({})
       board = user.create_board(@boardname)
 
-      if (user.boards_created.include?(board)) && (user.boards_watching.include?(board))
-        puts 'test_board_is_assigned_to_user is OK'
-      else
-        puts 'test_board_is_assigned_to_user FAILED'
-      end
+      assert(user.boards_created.include? board)
+      assert(user.boards_watching.include? board)
   end
 
   def test_add_watchers_to_board #4. make sure that several users are added to watchers to the board
@@ -58,11 +51,8 @@ require_relative 'Comment'
       board = user1.create_board(@boardname)
       board.add_watcher(user2)
 
-      if (board.watchers.include?(user2)) && (board.watchers.length == 2)
-        puts 'test_add_watchers_to_board is OK'
-      else
-        puts 'test_add_watchers_to_board FAILED'
-      end
+      assert(board.watchers.include? user2)
+      assert_equal(board.watchers.length, 2)
   end
 
    def test_remove_watchers #5. make sure that user was deleted from wathers
@@ -74,11 +64,8 @@ require_relative 'Comment'
       board.add_watcher(user3)
       board.remove_watcher(user2)
 
-      if (board.watchers.include?(user2)) || (user2.boards_watching.include?(board))
-        puts 'test_remove_watchers FAILED'
-      else
-        puts 'test_remove_watchers is OK'
-      end
+      assert_equal(board.watchers.length, 2)
+      assert(user2.boards_watching.empty?)
    end
 
 
@@ -87,11 +74,8 @@ require_relative 'Comment'
       board = user.create_board(@boardname)
       list = board.create_list(@listname)
 
-      if board.lists.include?(list) && (list.sticked_board == board)
-        puts 'test_create_list is OK'
-      else
-        puts 'test_create_list FAILED'
-      end
+      assert(board.lists.include? list)
+      assert_equal(list.sticked_board, board)
    end
 
 
@@ -101,11 +85,9 @@ require_relative 'Comment'
       list = board.create_list(@listname)
       card = user.create_card(@cardname, list)
 
-      if (user.cards_created.include?(card)) && (list.cards.include?(card)) && (card.list == list)
-           puts 'test_add_card is OK'
-      else
-           puts 'test_add_card is FAILED'
-      end
+      assert(user.cards_created.include? card)
+      assert(list.cards.include? card)
+      assert_equal(card.list, list)
    end
 
 
@@ -117,11 +99,7 @@ require_relative 'Comment'
       card = user.create_card(@cardname, list1)
       list1.move_card_to_new_list(card, list2)
 
-      if list2.cards.include?(card)
-        puts 'test_move_card is OK'
-      else
-        puts 'test_move_card FAILED'
-      end
+      assert(list2.cards.include? card)
  	end
 
 
@@ -132,11 +110,9 @@ require_relative 'Comment'
       card = user.create_card(@cardname, list)
       comment = user.create_comment(card)
 
-      if (comment.creator == user) && (comment.card == card) && (card.comments.include?(comment))
-        puts 'test_add_comment is OK'
-      else
-        puts 'test_add_comment FAILED'
-      end
+      assert_equal(comment.creator, user)
+      assert_equal(comment.card, card)
+      assert(card.comments.include? comment)
   end
 
 
@@ -148,10 +124,8 @@ require_relative 'Comment'
     comment = user.create_comment(card)
     user.delete_comment(comment)
 
-    if card.comments.include?(comment)
-      puts 'test_delete_comment FAILED'
-    else
-      puts 'test_delete_comment is OK'
-    end
+    assert_equal(card.comments.length, 0)
   end
-end
+ end
+
+#Test_delete_comment and Test_delete_watcher
