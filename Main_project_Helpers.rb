@@ -1,10 +1,12 @@
 require 'selenium-webdriver'
+require_relative 'CustomExceptions'
 require_relative 'User'
 require_relative 'Project'
 require_relative 'Issue'
 
 
  module Main_project_Helpers
+ 	include CustomExceptions
 
 
 
@@ -81,13 +83,13 @@ require_relative 'Issue'
 		issue = Issue.new unless issue_data.empty?
 		issue = issue_data.empty? ? Issue.new : Issue.new(issue_data)
 
- 		@driver.find_element(:css, '.new-issue').click
- 		@driver.find_element(:css, '#issue_tracker_id').click
+ 		@driver.find_element(:class, 'new-issue').click
+ 		@driver.find_element(:id, 'issue_tracker_id').click
  		@driver.find_element(:css, '#issue_tracker_id [value="' + issue.type.to_s + '"]').click
- 		@wait.until {@driver.find_element(:css, '#issue_subject').displayed?}
- 		@driver.find_element(:css, '#issue_subject').send_keys issue.name
- 		@driver.find_element(:css, '[name="commit"]').click
- 		@driver.find_element(:css, '.issues').click
+ 		@wait.until {@driver.find_element(:id, 'issue_subject').displayed?}
+ 		@driver.find_element(:id, 'issue_subject').send_keys issue.name
+ 		@driver.find_element(:name, 'commit').click
+ 		@driver.find_element(:class, 'issues').click
  		issue
 	end	
 
@@ -99,14 +101,14 @@ require_relative 'Issue'
 
 	def open_issues_tab(project)
 		open_project(project)
-		@wait.until {@driver.find_element(:css, '.issues').displayed?}
-		@driver.find_element(:css, '.issues').click
+		@wait.until {@driver.find_element(:class, 'issues').displayed?}
+		@driver.find_element(:class, 'issues').click
 	end
 
 
 	def is_issues_tab_empty?(project)
 		open_issues_tab(project)
-		@driver.find_elements(:css, '.nodata').empty? ? false : true
+		@driver.find_elements(:class, 'nodata').empty? ? false : true
 	end
    
 

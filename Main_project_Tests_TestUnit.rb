@@ -19,18 +19,17 @@ require_relative 'CustomExceptions'
 
 
 	def test_register_user
-		user = register_user
+		register_user
 		
 		expected_text = 'Your account has been activated. You can now log in.'
-		actual_text = @driver.find_element(:css, '#flash_notice').text
+		actual_text = @driver.find_element(:id, 'flash_notice').text
 		assert_equal(expected_text, actual_text)
 	end
-
 
 	def test_log_out
 		register_user
 		log_out
-		assert(@driver.find_element(:css, '.login').displayed?)
+		assert(@driver.find_element(:class, 'login').displayed?)
 	end
 
 
@@ -50,81 +49,77 @@ require_relative 'CustomExceptions'
 	 	change_pass(user)
 	 		
 	 	expected_notice = 'Password was successfully updated.'
-	 	actual_notice = @driver.find_element(:css, '#flash_notice').text
+	 	actual_notice = @driver.find_element(:id, 'flash_notice').text
 	 	assert_equal(expected_notice, actual_notice)
 	 	log_out
 	 	log_in(user)
 	 	expected_login = user.login
-	 	actual_login = @driver.find_element(:css, '[class="user active"]').text
+	 	actual_login = @driver.find_element(:css, '.user.active').text
 	 	assert_equal(expected_login, actual_login)
 	end
 
 
  	def test_create_new_project
- 		user = register_user
- 	 	project = create_new_project
+ 		register_user
+ 	 	create_new_project
 
  	 	expected_notice = 'Successful creation.'
- 	 	actual_notice = @driver.find_element(:css, '#flash_notice').text
+ 	 	actual_notice = @driver.find_element(:id, 'flash_notice').text
  	 	assert_equal(expected_notice, actual_notice)
  	end
 
 
  	def test_create_new_version
- 		user = register_user
+ 		register_user
  		project = create_new_project
  		create_new_version(project)
 
  		expected_notice = 'Successful creation.'
- 		activectual_notice = @driver.find_element(:css, '#flash_notice').text
+ 		actual_notice = @driver.find_element(:id, 'flash_notice').text
  		assert_equal(expected_notice, actual_notice)
  	end
 
 
 	def test_create_bug
-		user = register_user
-		project = create_new_project
-		issue = create_new_issue({type: '1'})
+		register_user
+		create_new_project
+		issue = create_new_issue(type: '1')
 	     	
-		expected_subject = issue.name
-		actual_array_subjects = []
-		actual_array_subjects = @driver.find_elements(:css, '.subject').map(&:text)
-		assert_true(actual_array_subjects.include? expected_subject)	
+		actual_array_subjects = @driver.find_elements(:class, 'subject').map(&:text)
+		assert_true(actual_array_subjects.include? issue.name)	
 	end
 
 
 	def test_create_feature
-		user = register_user
-		project = create_new_project
-		issue = create_new_issue({type: '2'})
+		register_user
+		create_new_project
+		issue = create_new_issue(type: '2')
 		     	
 		expected_subject = issue.name
-		actual_array_subjects = []
-		actual_array_subjects = @driver.find_elements(:css, '.subject').map(&:text)
+		actual_array_subjects = @driver.find_elements(:class, 'subject').map(&:text)
 		assert_true(actual_array_subjects.include? expected_subject)
 	end
 
 
 	def test_create_support
-		user = register_user
-		project = create_new_project
-		issue = create_new_issue({type: '3'})
+		register_user
+		create_new_project
+		issue = create_new_issue(type: '3')
 		    
 		expected_subject = issue.name
-		actual_array_subjects = []
-		actual_array_subjects = @driver.find_elements(:css, '.subject').map(&:text)
+		actual_array_subjects = @driver.find_elements(:class, 'subject').map(&:text)
 		assert_true(actual_array_subjects.include? expected_subject)
 	end
 
 
 	def test_create_issues
-		user = register_user
-		project = create_new_project
-		issue1 = create_new_issue({type: '1'})
-		issue2 = create_new_issue({type: '2'})
-		issue3 = create_new_issue({type: '3'})
+		register_user
+		create_new_project
+		issue1 = create_new_issue(type: '1')
+		issue2 = create_new_issue(type: '2')
+		issue3 = create_new_issue(type: '3')
 		     	
-		actual_array_subjects = @driver.find_elements(:css, '.subject').map(&:text)
+		actual_array_subjects = @driver.find_elements(:class, 'subject').map(&:text)
 		assert_equal(issue3.name, actual_array_subjects[0])
 		assert_equal(issue2.name, actual_array_subjects[1])
 		assert_equal(issue1.name, actual_array_subjects[2])
@@ -132,30 +127,29 @@ require_relative 'CustomExceptions'
 
 
     def test_open_project
-    	user = register_user
+    	register_user
     	project = create_new_project
-    	open_project(project)
+    	open_project(project) || tries = 3
 
-    	assert(@driver.find_element(:css, '.overview.selected').displayed?)
-    	
-    rescue Selenium::WebDriver::Error::NoSuchElementError => e
-		puts 'Exception ' + e.class.to_s + ' rescued, creating new project'
-		project = create_new_project
-		open_project(project)
-		assert(@driver.find_element(:css, '.overview.selected').displayed?)
+    	begin
+    		@driver.find_element(:css, '.overview.selected').displayed?
+    	rescue ProjectNotFoundError
+    		create_new_project
+    		retry unless (tries -=1).redo
+    	end
+    	assert(@driver.find_element(:css, 'h1').text, project.name)
     end
 
-
 	def test_if_issues_tab_is_empty
-		user = register_user
+		register_user
 		project = create_new_project
 		open_issues_tab(project)
 		     	
-		assert(@driver.find_element(:css, '.nodata').displayed?)
+		assert(@driver.find_element(:class, 'nodata').displayed?)
 	end
 
 	def test_open_issues_tab
-		user = register_user
+		register_user
  	  	project = create_new_project
  	  	open_issues_tab(project)
 		
@@ -167,14 +161,9 @@ require_relative 'CustomExceptions'
 		project = create_new_project
 		issue = create_new_issue
 
-		if @driver.find_element(:css, '.nodata').displayed?
-		raise NoIssueError
-        end
-        
 		add_self_to_watchers(project, issue)
 
 		self_watcher = user.first_name + ' ' + user.last_name
-		actual_watchers = []
 		actual_watchers = @driver.find_elements(:css, 'ul.watchers').map(&:text)
 		assert_true(actual_watchers.include? self_watcher)
 	end
@@ -200,7 +189,7 @@ require_relative 'CustomExceptions'
 		assert_true(actual_watchers.include? self_watcher)
 
 		expected_subject = issue.name
-	    actual_array_subjects = @driver.find_elements(:css, '.subject').map(&:text)
+	    actual_array_subjects = @driver.find_elements(:class, 'subject').map(&:text)
 	    assert_true(actual_array_subjects.include? expected_subject)
 	end
     

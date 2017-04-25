@@ -5,8 +5,8 @@
 
 module CustomExceptions
 
-	class NoIssueError < StandardError
-		def initialize(msg = "========CustomError: NoIssueError========"
+	class ProjectNotFoundError < StandardError
+		def initialize(msg = "========Ooooops! CustomError: Project was not found.NoIssueError========")
 			super
 		end
 	end
