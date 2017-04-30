@@ -135,7 +135,7 @@ require_relative 'CustomExceptions'
     		@driver.find_element(:css, '.overview.selected').displayed?
     	rescue ProjectNotFoundError
     		create_new_project
-    		retry unless (tries -=1).redo
+    		retry unless (tries -=1)
     	end
     	assert(@driver.find_element(:css, 'h1').text, project.name)
     end
