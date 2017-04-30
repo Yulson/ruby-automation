@@ -122,6 +122,9 @@ require_relative 'CustomExceptions'
 		issue3 = create_new_issue(type: '3')
 		     	
 		array_subjects = @driver.find_elements(:class, 'subject').map(&:text)
+		expected_subjects = [issue1.name, issue2.name, issue3.name]
+		expect(array_subjects).to match_array(expected_subjects)
+
 		expect(issue3.name).to eql(array_subjects[0])
 		expect(issue2.name).to eql(array_subjects[1])
 		expect(issue1.name).to eql(array_subjects[2])
@@ -162,7 +165,7 @@ require_relative 'CustomExceptions'
 
 		self_watcher = user.first_name + ' ' + user.last_name
 		actual_watchers = @driver.find_elements(:css, 'ul.watchers').map(&:text)
-		assert_true(actual_watchers.include? self_watcher)
+		expect(array_watchers).to include(self_watcher)
 	end
 
 
