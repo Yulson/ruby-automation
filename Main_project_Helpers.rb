@@ -28,24 +28,24 @@ require_relative 'Issue'
 
 
 	def log_out
-		@driver.find_element(:css, '.logout').click
+		@driver.find_element(:class, 'logout').click
 	end
 
 
 	def log_in(user)
-		@driver.find_element(:css, '.login').click
-		@driver.find_element(:css, '#username').send_keys user.login
-		@driver.find_element(:css, '#password').send_keys user.password
+		@driver.find_element(:class, 'login').click
+		@driver.find_element(:id, 'username').send_keys user.login
+		@driver.find_element(:id, 'password').send_keys user.password
 		@driver.find_element(:css, '[name="login"]').click
 	end
 	
 
  	def change_pass(user)		
- 		@driver.find_element(:css, '.my-account').click
- 		@driver.find_element(:css, '.icon-passwd').click
- 		@driver.find_element(:css, '#password').send_keys user.password
- 		@driver.find_element(:css, '#new_password').send_keys user.change_password
- 		@driver.find_element(:css, '#new_password_confirmation').send_keys user.password
+ 		@driver.find_element(:class, 'my-account').click
+ 		@driver.find_element(:class, 'icon-passwd').click
+ 		@driver.find_element(:id, 'password').send_keys user.password
+ 		@driver.find_element(:id, 'new_password').send_keys user.change_password
+ 		@driver.find_element(:id, 'new_password_confirmation').send_keys user.password
  		@driver.find_element(:css, '[name="commit"]').click
  	end
  	
@@ -54,9 +54,9 @@ require_relative 'Issue'
  		project = Project.new unless project_data.empty?
 		project = project_data.empty? ? Project.new : Project.new(project_data)
 
- 		@driver.find_element(:css, '.projects').click
- 		@driver.find_element(:css, '.icon-add').click
- 		@driver.find_element(:css, '#project_name').send_keys project.name
+ 		@driver.find_element(:class, 'projects').click
+ 		@driver.find_element(:class, 'icon-add').click
+ 		@driver.find_element(:id, 'project_name').send_keys project.name
  		@wait.until {@driver.find_element(:css, '[name="commit"]').displayed?}
  		@driver.find_element(:css, '[name="commit"]').click
  		project
@@ -64,17 +64,17 @@ require_relative 'Issue'
 
 
  	def create_new_version(project)
-  		@driver.find_element(:css, '#tab-versions').click
-  		@driver.find_element(:css, '#tab-content-versions .icon-add').click
-  		@driver.find_element(:css, '#version_name').send_keys project.version
+  		@driver.find_element(:id, 'tab-versions').click
+  		@driver.find_element(:id, 'tab-content-versions .icon-add').click
+  		@driver.find_element(:id, 'version_name').send_keys project.version
   		@driver.find_element(:css, '[name="commit"]').click
   	end
 
 
     def create_issue_category(issue)
- 		@driver.find_element(:css, '#tab-categories').click
-  		@driver.find_element(:css, '#tab-content-categories .icon-add').click
-  		@driver.find_element(:css, '#issue_category_name').send_keys issue_category
+ 		@driver.find_element(:id, 'tab-categories').click
+  		@driver.find_element(:id, 'tab-content-categories .icon-add').click
+  		@driver.find_element(:id, 'issue_category_name').send_keys issue_category
   		@driver.find_element(:css, '[name="commit"]').click
   	end
 
