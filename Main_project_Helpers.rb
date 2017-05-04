@@ -11,7 +11,6 @@ require_relative 'Issue'
 
 
 	def register_user(user_data={})
- 		user = User.new unless user_data.empty?
 		user = user_data.empty? ? User.new : User.new(user_data)
 
 		@driver.find_element(:class, 'register').click
@@ -51,7 +50,6 @@ require_relative 'Issue'
  	
 
  	def create_new_project(project_data={})
- 		project = Project.new unless project_data.empty?
 		project = project_data.empty? ? Project.new : Project.new(project_data)
 
  		@driver.find_element(:class, 'projects').click
@@ -80,7 +78,6 @@ require_relative 'Issue'
 
 
 	def create_new_issue(issue_data={})
-		issue = Issue.new unless issue_data.empty?
 		issue = issue_data.empty? ? Issue.new : Issue.new(issue_data)
 
  		@driver.find_element(:class, 'new-issue').click
