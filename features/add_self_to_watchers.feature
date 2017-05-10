@@ -4,5 +4,5 @@ Feature: Add self to watchers
 
   Scenario: Positive add self to watchers
     Given I am on Issue page
-    When I click on "Whatch" icon
+    When I add self to watchers
     Then I see "Unwatch" icon on the Issue page

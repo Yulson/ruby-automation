@@ -6,6 +6,5 @@ Feature:  Login user
   Scenario: Positive log in
 
     Given I am not logged in
-    When I click on "Log in" button
-    And I submit valid credentials: <login>/<password>
+    When I log in
     Then I am logged in

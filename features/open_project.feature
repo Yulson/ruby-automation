@@ -5,8 +5,7 @@ Feature:  Open project
 
   Scenario: Positive open project
 
-    Given I am on "http://demo.redmine.org/" page
-    When I submit project_name into search field
-    And I press Enter key
-    And I click on project_name
-    Then I am on project page
+    Given on current page
+    When I search for a project
+    And Chose a project on Search Results page
+    Then Project page is open

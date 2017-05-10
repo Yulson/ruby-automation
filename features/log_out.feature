@@ -5,7 +5,7 @@ Feature:  Logout user
 
   Scenario: Log out
 
-    Given I am logged in as test_user
-    When I click "log out"
-    Then I am on "http://demo.redmine.org/" page
+    Given I am logged in
+    When I log out
+    Then Home page is open
     And "Log in" button is shown

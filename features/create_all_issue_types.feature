@@ -6,7 +6,7 @@ Feature: Create all issue types
   Background: I am on New Issue tab on Project page
 
   Scenario Outline: Positive create an issue of different types
-    When I submit data "<issue_type>"/"<subject>"
+    When I submit data "<issue_type>"/"<subject"
     Then I see successful message "Issue created"
     And Issue is shown on Project/Issues Tab
 

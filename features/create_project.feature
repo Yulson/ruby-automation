@@ -5,9 +5,8 @@ Feature:  Create a project
 
   Scenario: Positive create a project
 
-    Given I am logged in as test_user/password
-    And I am on "http://demo.redmine.org/projects" page
-    When I click on "New project" link
-    And I submit project_name
-    And I click "Create" button
+    Given I am logged in
+    And I am on All projects page
+    When I create a new project
     Then I see "Successful creation message."
+    And New project is created
