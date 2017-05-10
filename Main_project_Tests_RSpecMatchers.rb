@@ -1,7 +1,7 @@
 require 'faker'
 require 'selenium-webdriver'
 require 'test/unit'
-require 'rspec'
+require 'rspec/expectations'
 require_relative 'Main_project_Helpers'
 require_relative 'User'
 require_relative 'Project'
@@ -22,7 +22,7 @@ require_relative 'CustomExceptions'
 	def test_register_user
 		register_user
 
-		flash_notice = @driver.find_element(:css, '#flash_notice').text
+		flash_notice = @driver.find_element(:id, 'flash_notice').text
 		expect(flash_notice).to eql('Your account has been activated. You can now log in.')
 	end
 
@@ -31,7 +31,7 @@ require_relative 'CustomExceptions'
 		register_user
 		log_out
 
-		sign_in_button = @driver.find_element(:css, '.login').text
+		sign_in_button = @driver.find_element(:class, 'login').text
 		expect(sign_in_button).to eql('Sign in')
 	end
 
@@ -55,7 +55,7 @@ require_relative 'CustomExceptions'
 	 	assert_equal(expected_notice, actual_notice)
 	 	log_out
 
-		flash_notice = @driver.find_element(:css, '#flash_notice').text
+		flash_notice = @driver.find_element(:id, 'flash_notice').text
 		expect(flash_notice).to eql('Password was successfully updated.')
 
 		log_in(user)
@@ -68,7 +68,7 @@ require_relative 'CustomExceptions'
  		register_user
  	 	create_new_project
 
-		flash_notice = @driver.find_element(:css, '#flash_notice').text
+		flash_notice = @driver.find_element(:id, 'flash_notice').text
 		expect(flash_notice).to eql('Successful creation.')
  	end
 
@@ -179,9 +179,6 @@ require_relative 'CustomExceptions'
 		issue = create_or_not_create_new_issue(project)
 		if is_issues_tab_empty?(project)
 			issue = create_new_issue
-			puts 'issues tab was empty================================='
-		else
-			puts 'issues tab was not empty============================='
 		end
 		add_self_to_watchers(project, issue)
 		self_watcher = user.first_name + ' ' + user.last_name
