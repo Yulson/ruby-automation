@@ -36,8 +36,6 @@ require_relative 'Comment'
       expect(board.boardname).should be_instance_of(String)
       expect(board.lists).should be_instance_of(Array)
       expect(board.creator).to eql(user)
-      expect
-      assert_equal(board.creator, user)
       expect(board.watchers).to include(user)
    end
 
